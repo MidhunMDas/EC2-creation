@@ -1,0 +1,304 @@
+#yum update -y
+
+#curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+#unzip awscliv2.zipsudo 
+#./aws/install
+#/usr/local/bin/aws --version
+
+#aws s3 ls
+
+#echo "lets do it" >> midhun.txt
+
+#aws s3 ls
+2020-02-19 09:44:06 midhun.aws
+
+#aws s3 cp midhun.txt s3://midhun.aws
+upload: ./midhun.txt to s3://midhun.aws/midhun.txt 
+
+# aws s3 mb s3://fzs.aws --region ap-south-1
+make_bucket: fzs.aws
+
+# aws s3api get-bucket-location --bucket fzs.aws
+{
+"LocationConstraint": "ap-south-1"
+}
+# aws s3api get-bucket-location --bucket midhun.aws
+{
+"LocationConstraint": "us-east-2"
+}
+
+# aws s3 sync s3://midhun.aws s3://fzs.aws
+copy: s3://midhun.aws/midhun.txt to s3://fzs.aws/midhun.txt 
+
+# aws s3 ls s3://fzs.aws
+2020-02-19 10:04:09 11 midhun.txt
+
+# aws s3 ls s3://midhun.aws
+PRE midhun_aws1/
+2020-02-19 10:27:02 0 aws1
+2020-02-19 10:27:03 0 aws2
+2020-02-19 10:27:03 0 aws3
+2020-02-19 10:27:03 0 aws4
+2020-02-19 10:27:03 0 aws5
+2020-02-19 09:46:18 11 midhun.txt
+
+# aws s3 ls s3://midhun.aws/midhun_aws1/
+2020-02-19 10:27:03 0 3
+2020-02-19 10:27:03 0 file
+2020-02-19 10:27:03 0 file1
+2020-02-19 10:27:03 0 file2
+
+# aws s3 sync s3://midhun.aws s3://fzs.aws
+copy: s3://midhun.aws/aws1 to s3://fzs.aws/aws1
+copy: s3://midhun.aws/aws3 to s3://fzs.aws/aws3
+copy: s3://midhun.aws/aws4 to s3://fzs.aws/aws4
+copy: s3://midhun.aws/aws5 to s3://fzs.aws/aws5
+copy: s3://midhun.aws/midhun_aws1/3 to s3://fzs.aws/midhun_aws1/3
+copy: s3://midhun.aws/midhun_aws1/file to s3://fzs.aws/midhun_aws1/file
+copy: s3://midhun.aws/midhun_aws1/file1 to s3://fzs.aws/midhun_aws1/file1
+copy: s3://midhun.aws/midhun_aws1/file2 to s3://fzs.aws/midhun_aws1/file2
+copy: s3://midhun.aws/aws2 to s3://fzs.aws/aws2
+
+## aws s3 rb s3://fzs.aws --force
+delete: s3://fzs.aws/aws1
+delete: s3://fzs.aws/aws4
+delete: s3://fzs.aws/midhun_aws1/file1
+delete: s3://fzs.aws/midhun_aws1/file2
+delete: s3://fzs.aws/aws5
+delete: s3://fzs.aws/midhun_aws1/3
+delete: s3://fzs.aws/midhun_aws1/file
+delete: s3://fzs.aws/midhun.txt
+delete: s3://fzs.aws/aws2
+delete: s3://fzs.aws/aws3
+remove_bucket: fzs.aws
+
+# aws s3 rm s3://midhun.aws/midhun_aws1
+delete: s3://midhun.aws/midhun_aws1
+
+
+## aws s3 ls s3://midhun.aws --summarize --human-readable --recursive
+2020-02-19 10:27:02 0 Bytes aws1
+2020-02-19 10:27:03 0 Bytes aws2
+2020-02-19 10:27:03 0 Bytes aws3
+2020-02-19 10:27:03 0 Bytes aws4
+2020-02-19 10:27:03 0 Bytes aws5
+2020-02-19 09:46:18 11 Bytes midhun.txt
+2020-02-19 10:27:03 0 Bytes midhun_aws1/3
+2020-02-19 10:27:03 0 Bytes midhun_aws1/file
+2020-02-19 10:27:03 0 Bytes midhun_aws1/file1
+2020-02-19 10:27:03 0 Bytes midhun_aws1/file2
+
+Total Objects: 10
+Total Size: 11 Bytes
+
+# aws s3 rm s3://midhun.aws/midhun_aws1 --recursive
+delete: s3://midhun.aws/midhun_aws1/3
+delete: s3://midhun.aws/midhun_aws1/file2
+delete: s3://midhun.aws/midhun_aws1/file
+delete: s3://midhun.aws/midhun_aws1/file1
+
++++++++++++++++++++++
+
+To create a key pair::
+# aws ec2 create-key-pair --key-name clikey
+{
+"KeyFingerprint": "3c:d0:89:03:8f:1d:1a:51:f0:36:b1:d1:20:51:2d:ad:23:02:4a:3d",
+"KeyMaterial": "-----
+
+describe key
+# aws ec2 describe-key-pairs --key-name clikey
+{
+"KeyPairs": [
+{
+"KeyPairId": "key-0e2e93ba676a6db3a",
+"KeyFingerprint": "3c:d0:89:03:8f:1d:1a:51:f0:36:b1:d1:20:51:2d:ad:23:02:4a:3d",
+"KeyName": "clikey",
+"Tags": []
+}
+]
+}
+
+or 
+
+aws ec2 create-key-pair --key-name s3level --query 'KeyMaterial' --output text > clisec_new.pem
+
+
+Create security group
+## aws ec2 create-security-group --group-name clisec --description "midhun_security"
+{
+"GroupId": "sg-0cfddef12da060668"
+}
+
+
+initial information for security group
+# aws ec2 describe-security-groups --group-names clisec
+{
+"SecurityGroups": [
+{
+"Description": "midhun_security",
+"GroupName": "clisec",
+"IpPermissions": [],
+"OwnerId": "569216063599",
+"GroupId": "sg-0cfddef12da060668",
+"IpPermissionsEgress": [
+{
+"IpProtocol": "-1",
+"IpRanges": [
+{
+"CidrIp": "0.0.0.0/0"
+}
+],
+"Ipv6Ranges": [],
+"PrefixListIds": [],
+"UserIdGroupPairs": []
+}
+],
+"VpcId": "vpc-bb5da9d0"
+}
+]
+}
+
+
+# aws ec2 describe-images --region us-east-2
+{
+"Images": [
+{
+"Architecture": "x86_64",
+"CreationDate": "2016-08-03T21:14:05.000Z",
+"ImageId": "aki-d83a61bd",
+"ImageLocation": "amzn-ami-us-east-2/pv-grub2-hd0_2.02-1.b2-x86_64.xz.manifest.xml",
+"ImageType": "kernel",
+"Public": true,
+"OwnerId": "137112412989",
+"State": "available",
+"BlockDeviceMappings": [],
+"Description": "pv-grub2-hd0_2.02-1.b2-x86_64.xz",
+"Hypervisor": "xen",
+"ImageOwnerAlias": "amazon",
+"Name": "pv-grub2-hd0_2.02-1.b2-x86_64.xz",
+"RootDeviceType": "instance-store",
+"VirtualizationType": "paravirtual"
+},
+
+
+# aws ec2 describe-subnets
+{
+"Subnets": [
+{
+"AvailabilityZone": "us-east-2c",
+"AvailabilityZoneId": "use2-az3",
+"AvailableIpAddressCount": 4091,
+"CidrBlock": "172.31.32.0/20",
+"DefaultForAz": true,
+"MapPublicIpOnLaunch": true,
+"State": "available",
+"SubnetId": "subnet-1062df5c",
+"VpcId": "vpc-bb5da9d0",
+"OwnerId": "569216063599",
+"AssignIpv6AddressOnCreation": false,
+"Ipv6CidrBlockAssociationSet": [],
+"SubnetArn": "arn:aws:ec2:us-east-2:569216063599:subnet/subnet-1062df5c"
+},
+
+
+==========================================================
+
+
+Create instances
+=============
+AMI ID : ami-0e38b48473ea57778
+Security Group ID : sg-0cfddef12da060668 ==> aws ec2 describe-security-groups
+Subnet ID : subnet-0e485766 ===> aws ec2 describe-subnets
+
+
+
+aws ec2 run-instances --image-id ami-0e38b48473ea57778 --count 1 --instance-type t2.micro --key-name clisec_new.pem --security-group-ids sg-0cfddef12da060668 --subnet-id subnet-0e485766
+
+
+
+Terminate
+========
+# aws ec2 terminate-instances --instance-ids i-0f14c7e5727d06c0f
+{
+"TerminatingInstances": [
+{
+"CurrentState": {
+"Code": 32,
+"Name": "shutting-down"
+},
+"InstanceId": "i-0f14c7e5727d06c0f",
+"PreviousState": {
+"Code": 16,
+"Name": "running"
+}
+}
+]
+}
+
+
+add port to the security group
+====================
+aws ec2 authorize-security-group-ingress --group-name clisec --protocol tcp --port 22 --cidr 23.237.48.165/32
+
+aws ec2 authorize-security-group-ingress --group-name clisec --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+to show :aws ec2 describe-security-groups
+
+
+
+add EBS volume
+==========
+# aws ec2 create-volume --size 80 --availability-zone us-east-2a
+{
+"AvailabilityZone": "us-east-2a",
+"CreateTime": "2020-02-19T23:02:40+00:00",
+"Encrypted": false,
+"Size": 80,
+"SnapshotId": "",
+"State": "creating",
+"VolumeId": "vol-062343a21b0eae6ba",
+"Iops": 240,
+"Tags": [],
+"VolumeType": "gp2"
+}
+
+default it will create volume-type gp2 
+
+
+snapshot of volume
+===============
+# aws ec2 create-snapshot --volume-id vol-062343a21b0eae6ba --description "my root volume"
+{
+"Description": "my root volume",
+"Encrypted": false,
+"OwnerId": "569216063599",
+"Progress": "",
+"SnapshotId": "snap-0f23f09bd73707399",
+"StartTime": "2020-02-19T23:16:56+00:00",
+"State": "pending",
+"VolumeId": "vol-062343a21b0eae6ba",
+"VolumeSize": 80,
+"Tags": []
+}
+
+
+
+Expand volume
+============2
+# aws ec2 modify-volume --size 90 --volume-id vol-062343a21b0eae6ba
+{
+"VolumeModification": {
+"VolumeId": "vol-062343a21b0eae6ba",
+"ModificationState": "modifying",
+"TargetSize": 90,
+"TargetIops": 270,
+"TargetVolumeType": "gp2",
+"OriginalSize": 80,
+"OriginalIops": 240,
+"OriginalVolumeType": "gp2",
+"Progress": 0,
+"StartTime": "2020-02-19T23:20:36+00:00"
+}
+}
+
+
