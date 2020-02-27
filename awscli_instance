@@ -1,0 +1,99 @@
+
+Create instances
+=============
+AMI ID : ami-0e38b48473ea57778
+Security Group ID : sg-0cfddef12da060668 ==> aws ec2 describe-security-groups
+Subnet ID : subnet-0e485766 ===> aws ec2 describe-subnets
+
+
+
+aws ec2 run-instances --image-id ami-0e38b48473ea57778 --count 1 --instance-type t2.micro --key-name clisec_new.pem --security-group-ids sg-0cfddef12da060668 --subnet-id subnet-0e485766
+
+
+
+Terminate
+========
+# aws ec2 terminate-instances --instance-ids i-0f14c7e5727d06c0f
+{
+"TerminatingInstances": [
+{
+"CurrentState": {
+"Code": 32,
+"Name": "shutting-down"
+},
+"InstanceId": "i-0f14c7e5727d06c0f",
+"PreviousState": {
+"Code": 16,
+"Name": "running"
+}
+}
+]
+}
+
+
+add port to the security group
+====================
+aws ec2 authorize-security-group-ingress --group-name clisec --protocol tcp --port 22 --cidr 23.237.48.165/32
+
+aws ec2 authorize-security-group-ingress --group-name clisec --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+to show :aws ec2 describe-security-groups
+
+
+
+add EBS volume
+==========
+# aws ec2 create-volume --size 80 --availability-zone us-east-2a
+{
+"AvailabilityZone": "us-east-2a",
+"CreateTime": "2020-02-19T23:02:40+00:00",
+"Encrypted": false,
+"Size": 80,
+"SnapshotId": "",
+"State": "creating",
+"VolumeId": "vol-062343a21b0eae6ba",
+"Iops": 240,
+"Tags": [],
+"VolumeType": "gp2"
+}
+
+default it will create volume-type gp2 
+
+
+snapshot of volume
+===============
+# aws ec2 create-snapshot --volume-id vol-062343a21b0eae6ba --description "my root volume"
+{
+"Description": "my root volume",
+"Encrypted": false,
+"OwnerId": "569216063599",
+"Progress": "",
+"SnapshotId": "snap-0f23f09bd73707399",
+"StartTime": "2020-02-19T23:16:56+00:00",
+"State": "pending",
+"VolumeId": "vol-062343a21b0eae6ba",
+"VolumeSize": 80,
+"Tags": []
+}
+
+
+
+Expand volume
+============2
+# aws ec2 modify-volume --size 90 --volume-id vol-062343a21b0eae6ba
+{
+"VolumeModification": {
+"VolumeId": "vol-062343a21b0eae6ba",
+"ModificationState": "modifying",
+"TargetSize": 90,
+"TargetIops": 270,
+"TargetVolumeType": "gp2",
+"OriginalSize": 80,
+"OriginalIops": 240,
+"OriginalVolumeType": "gp2",
+"Progress": 0,
+"StartTime": "2020-02-19T23:20:36+00:00"
+}
+}
+
+
